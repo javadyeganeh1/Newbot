@@ -1,7 +1,7 @@
 """
 Main bot module for handling Telegram interactions.
 """
-
+from typing import Optional
 import os
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, CallbackContext
