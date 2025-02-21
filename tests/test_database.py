@@ -2,33 +2,37 @@ import pytest
 import sqlite3
 from src.database import DatabaseManager
 
-
 @pytest.fixture
-def db_manager():
-    """مورد آزمایشی مدیریت پایگاه داده"""
-    # ایجاد پایگاه داده موقت برای تست
-    db_manager = DatabaseManager()
-    yield db_manager
-    # بعد از تست، پایگاه داده را بازنشانی می‌کنیم
-    db_manager.cursor.execute("DROP TABLE IF EXISTS users")
-    db_manager.cursor.execute("DROP TABLE IF EXISTS favorites")
-    db_manager.conn.commit()
+def db():
+    """ایجاد یک پایگاه داده موقتی برای تست"""
+    db = DatabaseManager()
+    db.conn = sqlite3.connect(":memory:")  # استفاده از دیتابیس در حافظه
+    db.cursor = db.conn.cursor()
+    db._create_tables()
+    return db
 
+def test_get_user_page(db):
+    """بررسی مقدار پیش‌فرض صفحه کاربر"""
+    user_id = 1
+    assert db.get_user_page(user_id) == 1  # مقدار پیش‌فرض باید ۱ باشد
 
-def test_get_user_page(db_manager):
-    """تست برای گرفتن صفحه کاربر"""
-    user_id = 123
-    db_manager.get_user_page(user_id)
-    db_manager.cursor.execute("SELECT page FROM users WHERE id = ?", (user_id,))
-    page = db_manager.cursor.fetchone()[0]
-    assert page == 1  # باید صفحه ۱ را برگرداند
+def test_set_user_page(db):
+    """بررسی تنظیم شماره صفحه برای کاربر"""
+    user_id = 1
+    db.set_user_page(user_id, 3)
+    assert db.get_user_page(user_id) == 3
 
-
-def test_add_favorite(db_manager):
-    """تست برای اضافه کردن علاقه‌مندی"""
-    user_id = 123
+def test_add_favorite(db):
+    """بررسی افزودن به علاقه‌مندی‌ها"""
+    user_id = 1
     page = 2
-    db_manager.add_favorite(user_id, page)
-    db_manager.cursor.execute("SELECT page FROM favorites WHERE user_id = ? AND page = ?", (user_id, page))
-    result = db_manager.cursor.fetchone()
-    assert result is not None  # باید رکورد اضافه شده باشد
+    db.add_favorite(user_id, page)
+    assert db.get_favorites(user_id) == [2]
+
+def test_remove_favorite(db):
+    """بررسی حذف از علاقه‌مندی‌ها"""
+    user_id = 1
+    page = 2
+    db.add_favorite(user_id, page)
+    db.remove_favorite(user_id, page)
+    assert db.get_favorites(user_id) == []
