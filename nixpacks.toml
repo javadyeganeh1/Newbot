@@ -1,1 +1,6 @@
-start python src/python.py
+[build]
+# پیکربندی‌های مربوط به نصب وابستگی‌ها، مثل نصب کتابخانه‌های پایتون از requirements.txt
+command = "python -m venv venv && . venv/bin/activate && pip install -r requirements.txt"
+
+[start]
+command = "python src/bot.py"
