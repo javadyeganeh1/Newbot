@@ -1,3 +1,4 @@
+from src.content import Content
 import pytest
 from unittest.mock import MagicMock
 from telegram import Update
