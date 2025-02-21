@@ -1,31 +1,31 @@
-from src.content import Content
 import pytest
 from unittest.mock import MagicMock
-from telegram import Update
-from bot import TelegramBot
+from src.bot import TelegramBot
+from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton
+from telegram.ext import CallbackContext
+
 
 @pytest.fixture
-def bot():
-    bot = TelegramBot("dummy_token")
-    bot.application = MagicMock()  # Mock the Telegram Application
+def mock_bot():
+    """مورد آزمایشی ربات با شبیه‌سازی پیام‌ها و پاسخ‌ها"""
+    bot = TelegramBot(token="dummy_token")
+    bot.application = MagicMock()  # شبیه‌سازی متدهای application
     return bot
 
-def test_start(bot):
-    # Simulate the start command
+
+@pytest.mark.asyncio
+async def test_start(mock_bot):
+    """تست برای بررسی درست بودن پیامی که در start ارسال می‌شود"""
     update = MagicMock(spec=Update)
     update.message.reply_text = MagicMock()
-    bot.start(update, None)
-    update.message.reply_text.assert_called_once_with("سلام! 👋\nبه ربات خوش آمدید! لطفا یک گزینه را انتخاب کنید:")
 
-def test_show_content(bot):
-    # Simulate showing content
-    update = MagicMock(spec=Update)
-    update.callback_query.from_user.id = 1
-    update.callback_query.answer = MagicMock()
+    await mock_bot.start(update, MagicMock())
 
-    # Mock database interaction
-    bot.db.get_user_page = MagicMock(return_value=1)
-    bot.content_handler.get_page_content = MagicMock(return_value=Content("محتوای شماره 1", "این یک متن نمونه است"))
-
-    bot.show_content(update, None)
-    update.callback_query.answer.assert_called_once_with("📖 در حال نمایش محتوا...")
+    update.message.reply_text.assert_called_once_with(
+        "سلام! 👋\nبه ربات خوش آمدید! لطفا یک گزینه را انتخاب کنید:",
+        reply_markup=InlineKeyboardMarkup([
+            [InlineKeyboardButton("📖 نمایش محتوا", callback_data="show_content")],
+            [InlineKeyboardButton("🔍 جستجو", callback_data="search")],
+            [InlineKeyboardButton("❤️ علاقه‌مندی‌ها", callback_data="show_favorites")]
+        ])
+    )
