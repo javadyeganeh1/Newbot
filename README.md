@@ -21,6 +21,30 @@ Make sure you have the following installed:
 ### Steps to Install
 
 1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/javadyeganeh1/Newbot.git
-   cd Newbot
+    ```bash
+    git clone https://github.com/javadyeganeh1/Newbot.git
+    cd Newbot
+    ```
+
+2. **Install dependencies**:
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+3. **Set up environment variables**:
+    Create a `.env` file in the root directory and add your Telegram bot token:
+    ```
+    TELEGRAM_BOT_TOKEN=your-telegram-bot-token
+    ```
+
+4. **Run the bot**:
+    ```bash
+    python src/bot.py
+    ```
+
+### Development
+
+To run tests:
+```bash
+pytest
+```
