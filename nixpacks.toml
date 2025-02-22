@@ -1,9 +1,17 @@
-[build]
+[phases.setup]
 commands = [
-  "python -m venv --copies /opt/venv",
-  ". /opt/venv/bin/activate",
   "pip install -r requirements.txt"
 ]
 
-[start]
-command = "python src/bot.py""
+[phases.build]
+commands = []
+
+[phases.start]
+commands = [
+  "python src/bot.py"
+]
+
+[phases.test]
+commands = [
+  "pytest"
+]
