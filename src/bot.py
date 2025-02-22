@@ -24,7 +24,7 @@ class ContentHandler:
         """Create keyboard for content navigation"""
         is_favorite = page in self.db.get_favorites(user_id)
         favorite_button = (
-            "💔 حذف از علاقه‌مندی‌ها" if is_favorite else "❤️ افزودن به علاقه‌مندی‌ها"
+            "❌ حذف از علاقه‌مندی‌ها" if is_favorite else "❤️ افزودن به علاقه‌مندی‌ها"
         )
         favorite_action = f"remove_favorite_{page}" if is_favorite else f"add_favorite_{page}"
 
